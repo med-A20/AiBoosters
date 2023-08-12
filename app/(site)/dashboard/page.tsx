@@ -1,12 +1,12 @@
 "use client"
-import { Button } from '@/components/ui/button'
-import { Card, CardTitle } from '@/components/ui/card'
-import React from 'react'
+import { Button } from "@/components/ui/button"
+import { Card, CardTitle } from "@/components/ui/card"
+import React from "react"
 import { MessageSquare, ImageIcon, Music2Icon, VideoIcon, CodeIcon } from "lucide-react"
-import { cn } from '@/lib/utils'
-import { useRouter } from 'next/navigation'
+import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
-const page = () => {
+const DashBoardPage = () => {
   const router = useRouter()
   const tools = [
     {
@@ -46,21 +46,22 @@ const page = () => {
     },
   ]
   return (
-    <section className='px-2'>
-      <h2 className='text-2xl font-bold text-center pt-4'>Explore the power of AI tools</h2>
-      <p className='text-muted-foreground text-sm italic text-center p-7'>Welcome to AIBoosters, your gateway to the future of business optimization and growth. We are thrilled to present our cutting-edge AI-powered services designed to revolutionize your company's performance and take you to new heights. With AIBoosters by your side, the possibilities are limitless, and the results are extraordinary.</p>
+    <section className="px-2">
+      <h2 className="text-2xl font-bold text-center pt-4">Explore the power of AI tools</h2>
+      <p className="text-muted-foreground text-sm italic text-center p-7">Welcome to AIBoosters, your gateway to the future of business optimization and growth. We are thrilled to present our cutting-edge AI-powered services designed to revolutionize your company"s performance and take you to new heights. With AIBoosters by your side, the possibilities are limitless, and the results are extraordinary.</p>
 
-      <article className='w-full m-auto flex flex-row justify-around items-center flex-wrap gap-y-6'>
-        {tools.map((tool) => {
+      <article className="w-full m-auto flex flex-row justify-around items-center flex-wrap gap-y-6">
+        {tools.map((tool, key) => {
           return <Card 
+          key={key}
           onClick={()=>{
             router.push(tool.href)
           }}
-          className={cn('w-[250px] flex flex-col justify-between items-center p-4 cursor-pointer', ` hover:shadow-lg hover:shadow-[${tool.bgcolor}]`)}>
+          className={cn("w-[250px] flex flex-col justify-between items-center p-4 cursor-pointer", ` hover:shadow-lg hover:shadow-[${tool.bgcolor}]`)}>
             <Button className={cn(tool.bgcolor)}>
               <tool.icon className={cn(tool.color)} />
             </Button>
-            <CardTitle className='my-3 text-xl'>
+            <CardTitle className="my-3 text-xl">
               {tool.label}
             </CardTitle>
           </Card>
@@ -70,4 +71,4 @@ const page = () => {
   )
 }
 
-export default page
+export default DashBoardPage

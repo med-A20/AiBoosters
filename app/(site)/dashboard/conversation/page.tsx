@@ -19,7 +19,7 @@ import UserAvatar from '@/components/UserAvatar'
 import ChatAvatar from '@/components/ChatAvatar'
 import { cn } from '@/lib/utils'
 
-const page = () => {
+const ConvPage = () => {
   const router = useRouter()
   const [generating, setGenerating] = useState(false)
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
@@ -98,8 +98,8 @@ const page = () => {
       <div className="h-full row-span-5 overflow-auto w-full flex flex-col justify-start items-center">
         {generating && <Loading />}
         {messages.length === 0 && !generating ? <Empty text={"No Conversation started"} /> :
-        messages.map(message => {
-          return <div className={cn('my-2 w-full bg-gray-4 flex flex-row justify-start items-start p-1 rounded-md h-full overflow-auto', message.role === "user" ? "bg-violet-400" : "bg-violet-200")}>
+        messages.map((message, key) => {
+          return <div key={key} className={cn('my-2 w-full bg-gray-4 flex flex-row justify-start items-start p-1 rounded-md h-full overflow-auto', message.role === "user" ? "bg-violet-400" : "bg-violet-200")}>
             {message.role === "user" ? <UserAvatar /> : <ChatAvatar />}
             <p className={cn("m-1 ",message.role === "user" ? 'text-xl font-medium' : 'text-xl font-light italic')}>{message.content}</p>
           </div>
@@ -112,4 +112,4 @@ const page = () => {
   )
 }
 
-export default page
+export default ConvPage

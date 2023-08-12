@@ -3,7 +3,7 @@
 import Image from "next/image";
 import {Cairo} from "next/font/google";
 import { cn } from "@/lib/utils"
-import {LayoutDashboardIcon, MessageSquare, Settings, Code, ImageIcon, VideoIcon, Music} from "lucide-react"
+import {LayoutDashboardIcon, MessageSquare, Settings, Code, ImageIcon, VideoIcon, Music, Key} from "lucide-react"
 import Link from "next/link";
 import {usePathname} from 'next/navigation'
 import { SheetClose } from "./ui/sheet";
@@ -77,10 +77,12 @@ const Sidebar = ()=>{
 
         {/* Routes */}
         <article className="w-full flex flex-col gap-3 justify-start my-3">
-            {routes.map((route) =>{
+            {routes.map((route, Key) =>{
                 return <Link 
                 className={cn("flex-1 flex items-center m-1 p-1 text-[#E6FFFD] font-medium text-lg hover:bg-[#1363DF]/90 rounded-lg  transition-all", pathName === route.href ? "text-[#FFF]/90 bg-[#1363DF]" :"")}
-                href={route.href}>
+                href={route.href}
+                key={Key}
+                >
                     <route.icon className={cn("mx-1",route.color)}/>
                     {route.label}
                 </Link>

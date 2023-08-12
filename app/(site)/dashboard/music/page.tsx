@@ -19,7 +19,7 @@ import UserAvatar from '@/components/UserAvatar'
 import ChatAvatar from '@/components/ChatAvatar'
 import { cn } from '@/lib/utils'
 
-const page = () => {
+const MusicPage = () => {
   const router = useRouter()
   const [generating, setGenerating] = useState(false)
   const [music, setMusic] = useState<string>();
@@ -97,4 +97,4 @@ const page = () => {
   )
 }
 
-export default page
+export default MusicPage

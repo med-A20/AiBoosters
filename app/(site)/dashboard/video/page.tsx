@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation'
 import Loading from '@/components/Loading'
 import Empty from '@/components/Empty'
 
-const page = () => {
+const VideoPage = () => {
   const router = useRouter()
   const [generating, setGenerating] = useState(false)
   const [video, setVideo] = useState<string>();
@@ -92,4 +92,4 @@ const page = () => {
   )
 }
 
-export default page
+export default VideoPage
