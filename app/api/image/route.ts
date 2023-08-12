@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs";
 
 const { Configuration, OpenAIApi } = require("openai");
 
@@ -10,7 +11,29 @@ const openai = new OpenAIApi(configuration);
 
 export async function POST(req: Request) {
   try {
-    const { prompt, amount, resolution } = await req.json();
+    const { userId } = auth();
+    const body = await req.json();
+    const { prompt, amount = 1, resolution = "512x512" } = body;
+
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    if (!configuration.apiKey) {
+      return new NextResponse("OpenAI API Key not configured.", { status: 500 });
+    }
+
+    if (!prompt) {
+      return new NextResponse("Prompt is required", { status: 400 });
+    }
+
+    if (!amount) {
+      return new NextResponse("Amount is required", { status: 400 });
+    }
+
+    if (!resolution) {
+      return new NextResponse("Resolution is required", { status: 400 });
+    }
 
     const res = await openai.createImage({
       prompt: prompt,
@@ -19,6 +42,7 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(res.data.data);
   } catch (error) {
-    return new NextResponse("Internal Error " +error, { status: 500 });
+    console.log('[IMAGE_ERROR]', error);
+    return new NextResponse("Internal Error", { status: 500 });
   }
 }
