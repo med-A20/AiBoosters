@@ -38,7 +38,7 @@ const CodePage = () => {
     setGenerating(true)
     try {
       setMessages("")
-      const text = await axios.post("http://localhost:7000/api/code", {
+      const text = await axios.post("https://saas-ai.onrender.com/api/code", {
         prompt: values.prompt
       }).then(res => {
         setMessages(res.data.data.content)

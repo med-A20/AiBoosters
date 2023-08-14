@@ -32,7 +32,7 @@ const VideoPage = () => {
     try {
 
       setVideo(undefined)
-      const res = await axios.post("http://localhost:7000/api/video", values, {
+      const res = await axios.post("https://saas-ai.onrender.com/api/video", values, {
         headers: {'Content-Type': "application/json"}
       })
       setVideo(res.data[0])

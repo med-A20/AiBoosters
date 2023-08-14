@@ -42,7 +42,7 @@ const ConvPage = () => {
         // }
         // const newMessages = [...messages, userMessage]
 
-        const text = await axios.post("http://localhost:7000/api/conversation",{
+        const text = await axios.post("https://saas-ai.onrender.com/api/conversation",{
           prompt : values.prompt
         }).then(res => {
           setMessages(res.data.data.content)
