@@ -20,10 +20,11 @@ import { cn } from '@/lib/utils'
 import { ChatCompletionRequestMessage } from 'openai'
 import ReactMarkdown from "react-markdown"
 
+
 const CodePage = () => {
   const router = useRouter()
   const [generating, setGenerating] = useState(false)
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [messages, setMessages] = useState<string>("");
   // define form 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,17 +37,13 @@ const CodePage = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setGenerating(true)
     try {
-
-      const userMessage: ChatCompletionRequestMessage = {
-        role: 'user',
-        content: values.prompt
-      }
-      const newMessages = [...messages, userMessage]
-
-      const text = await axios.post("/api/code", {
-        prompt: newMessages
+      setMessages("")
+      const text = await axios.post("http://localhost:7000/api/code", {
+        prompt: values.prompt
       }).then(res => {
-        setMessages(prev => [userMessage, res.data, ...prev])
+        setMessages(res.data.data.content)
+        console.log(messages)
+        console.log(res.data.data.content)
         form.reset();
       }).catch(err => {
         console.log({ err })
@@ -69,35 +66,9 @@ const CodePage = () => {
         iconColor='bg-orange-400/40'
       />
       {/* prompt */}
-      <div className='h-[70vh] grid grid-rows-6'>
-        {/* response */}
-        <div className='row-span-5 overflow-y-auto'>
-          <div className="h-full row-span-5 overflow-auto w-full flex flex-col justify-start items-center">
-            {generating && <Loading />}
-            {messages.length === 0 && !generating ? <Empty text={"No code generated"} /> :
-              messages.map((message, key) => {
-                return <div key={key} className={cn('my-2 w-full text-xl font-medium  flex flex-row justify-start items-start p-1 rounded-md ', message.role === "user" ? "bg-violet-400" : "bg-violet-200")}>
-                  {message.role === "user" ? <UserAvatar /> : <ChatAvatar />}
-                  <ReactMarkdown components={{
-                    pre: ({ node, ...props }) => (
-                      <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
-                        <pre {...props} />
-                      </div>
-                    ),
-                    code: ({ node, ...props }) => (
-                      <code className="bg-black/10 rounded-lg p-1" {...props} />
-                    )
-                  }} className="text-sm overflow-hidden leading-7">
-                    {message.content || ""}
-                  </ReactMarkdown>
-                </div>
-              })
-
-            }
-          </div>
-        </div>
+      <div className='h-[70vh] flex flex-col justify-start'>
         {/* Form */}
-        <section className='mt-6 row-span-1'>
+        <section className='mt-6'>
           <Form {...form}>
             <form
               className='w-full grid grid-cols-12 grid-rows-2 md:grid-row-1'
@@ -123,6 +94,50 @@ const CodePage = () => {
             </form>
           </Form>
         </section>
+        {/* response */}
+        <div className='overflow-y-auto min-h-[50vh]'>
+          <div className="h-full row-span-5 overflow-auto w-full flex flex-col justify-start items-center">
+            {generating && <Loading />}
+            {/* {messages.length === 0 && !generating ? <Empty text={"No code generated"} /> :
+              messages.map((message, key) => {
+                return <div key={key} className={cn('my-2 w-full text-xl font-medium  flex flex-row justify-start items-start p-1 rounded-md ', message.role != "assistant" ? "bg-violet-400" : "bg-violet-200")}>
+                  {message.role != "assistant" ? <UserAvatar /> : <ChatAvatar />}
+                  <ReactMarkdown components={{
+                    pre: ({ node, ...props }) => (
+                      <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                        <pre {...props} />
+                      </div>
+                    ),
+                    code: ({ node, ...props }) => (
+                      <code className="bg-black/10 rounded-lg p-1" {...props} />
+                    )
+                  }} className="text-sm overflow-hidden leading-7">
+                    {message.content || ""}
+                  </ReactMarkdown>
+                </div>
+              })
+
+            } */}
+            {/* {messages ? messages : ""} */}
+            {messages.length != 0 &&
+              <div className={cn('my-2 w-full text-xl font-medium  flex flex-row justify-start items-start p-1 rounded-md ', "bg-violet-200")}>
+                {<ChatAvatar />}
+                <ReactMarkdown components={{
+                  pre: ({ node, ...props }) => (
+                    <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                      <pre {...props} />
+                    </div>
+                  ),
+                  code: ({ node, ...props }) => (
+                    <code className="bg-black/10 rounded-lg p-1" {...props} />
+                  )
+                }} className="text-sm overflow-hidden leading-7">
+                  {messages || ""}
+                </ReactMarkdown>
+              </div>}
+          </div>
+        </div>
+
       </div>
     </div>
   )

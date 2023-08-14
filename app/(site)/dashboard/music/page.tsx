@@ -37,7 +37,7 @@ const MusicPage = () => {
     try {
 
       setMusic(undefined)
-      const res = await axios.post("/api/music", values)
+      const res = await axios.post("https://saas-ai.onrender.com/api/music", values)
       setMusic(res.data)
       console.log(res.data)
     } catch (error) {

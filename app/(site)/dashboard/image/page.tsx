@@ -40,7 +40,7 @@ const PhotoPage = () => {
     try {
       setPhotos([]);
 
-      const response = await axios.post('/api/image', values);
+      const response = await axios.post('https://saas-ai.onrender.com/api/image', values);
 
       const urls = response.data.map((image: { url: string }) => image.url);
 

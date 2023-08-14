@@ -32,7 +32,9 @@ const VideoPage = () => {
     try {
 
       setVideo(undefined)
-      const res = await axios.post("/api/video", values)
+      const res = await axios.post("http://localhost:7000/api/video", values, {
+        headers: {'Content-Type': "application/json"}
+      })
       setVideo(res.data[0])
       console.log(res.data[0])
     } catch (error) {
