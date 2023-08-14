@@ -18,6 +18,7 @@ const VideoPage = () => {
   const router = useRouter()
   const [generating, setGenerating] = useState(false)
   const [video, setVideo] = useState<string>();
+  const [expired, setExpired] = useState(false)
   // define form 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,12 +34,14 @@ const VideoPage = () => {
 
       setVideo(undefined)
       const res = await axios.post("https://saas-ai.onrender.com/api/video", values, {
-        headers: {'Content-Type': "application/json"}
+        headers: { 'Content-Type': "application/json" }
       })
       setVideo(res.data[0])
       console.log(res.data[0])
     } catch (error) {
-      console.log(error)
+      if (error?.response?.data?.error == "Headers is not defined") {
+          setExpired(true)
+      }
     } finally {
       router.refresh()
       setGenerating(false);
@@ -85,9 +88,12 @@ const VideoPage = () => {
           {generating && <Loading />}
           {!video && !generating && <Empty text="No video generated" />}
           {video && <video controls className='w-full aspect-video'>
-            <source src={video}/>
+            <source src={video} />
           </video>
           }
+          {expired && <p>
+              Api key was expired !, try later 🙂
+            </p>}
         </div>
       </div>
     </>

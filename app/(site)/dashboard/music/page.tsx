@@ -23,6 +23,7 @@ const MusicPage = () => {
   const router = useRouter()
   const [generating, setGenerating] = useState(false)
   const [music, setMusic] = useState<string>();
+  const [expired, setExpired] = useState(false)
   // define form 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,7 +42,9 @@ const MusicPage = () => {
       setMusic(res.data)
       console.log(res.data)
     } catch (error) {
-      console.log(error)
+      if (error?.response?.data?.error == "Headers is not defined") {
+        setExpired(true)
+    }
     } finally {
       router.refresh()
       setGenerating(false);
@@ -91,6 +94,9 @@ const MusicPage = () => {
             <source src={music}></source>
           </audio>
           }
+          {expired && <p>
+              Api key was expired !, try later 🙂
+            </p>}
         </div>
       </div>
     </>
