@@ -41,8 +41,8 @@ const MusicPage = () => {
       const res = await axios.post("https://saas-ai.onrender.com/api/music", values)
       setMusic(res.data)
       console.log(res.data)
-    } catch (error) {
-      if (error?.response?.data?.error == "Headers is not defined") {
+    } catch (error : any) {
+      if (error.response.data.error == "Headers is not defined") {
         setExpired(true)
     }
     } finally {

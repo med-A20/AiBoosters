@@ -38,8 +38,8 @@ const VideoPage = () => {
       })
       setVideo(res.data[0])
       console.log(res.data[0])
-    } catch (error) {
-      if (error?.response?.data?.error == "Headers is not defined") {
+    } catch (error : any) {
+      if (error.response.data.error == "Headers is not defined") {
           setExpired(true)
       }
     } finally {
