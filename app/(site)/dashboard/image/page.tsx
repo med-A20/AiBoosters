@@ -59,7 +59,7 @@ const PhotoPage = () => {
       router.refresh();
     }
     form.reset()
-    setGenerating(true)
+    setGenerating(false)
   }
 
   return ( 
