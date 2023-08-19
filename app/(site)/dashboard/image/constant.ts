@@ -4,7 +4,7 @@ export const formSchema = z.object({
   prompt: z.string().min(1, {
     message: "Photo prompt is required"
   }),
-  amount: z.string().min(1),
+  amount: z.number(),
   resolution: z.string().min(1),
 });
 

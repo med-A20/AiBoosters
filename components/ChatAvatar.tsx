@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 
 const ChatAvatar = () => {
   return (
-    <Avatar className="w-8 h-8 m-3">
+    <Avatar className="w-8 h-8 m-1">
             <AvatarImage src={"/logo.png"}/>
             <AvatarFallback>
                 AI

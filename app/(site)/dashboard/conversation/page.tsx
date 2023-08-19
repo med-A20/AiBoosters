@@ -1,6 +1,6 @@
 "use client"
 import Heading from '@/components/Heading'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as z from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MessageSquare} from 'lucide-react'
@@ -18,11 +18,27 @@ import Empty from '@/components/Empty'
 import UserAvatar from '@/components/UserAvatar'
 import ChatAvatar from '@/components/ChatAvatar'
 import { cn } from '@/lib/utils'
+import { chatModel } from '../types.t'
 
 const ConvPage = () => {
   const router = useRouter()
   const [generating, setGenerating] = useState(false)
-  const [messages, setMessages] = useState<string>("");
+  const [chat, setChat] = useState<chatModel[]>([]);
+  const messagesRef = useRef(null);
+
+    // Scroll to the bottom whenever messages change
+    useEffect(() => {
+      scrollToBottom();
+    }, [chat]);
+  
+    // Function to scroll to the bottom of the messages container
+    const scrollToBottom = () => {
+      if (messagesRef.current) {
+        // Ensure to have HTMLDivElement type annotation for `current`
+        (messagesRef.current as HTMLDivElement).scrollTop = (messagesRef.current as HTMLDivElement).scrollHeight;
+      }
+    };
+
   // define form 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver : zodResolver(formSchema),
@@ -35,17 +51,17 @@ const ConvPage = () => {
   const onSubmit = async (values : z.infer<typeof formSchema>)=>{
     setGenerating(true)
     try {
-
-        // const userMessage : ChatCompletionRequestMessage = {
-        //   role : 'user',
-        //   content : values.prompt
-        // }
-        // const newMessages = [...messages, userMessage]
-
+        setChat(prev => [...prev, {
+          role: "boot",
+          content: values.prompt
+        }])
         const text = await axios.post("https://saas-ai.onrender.com/api/conversation",{
           prompt : values.prompt
         }).then(res => {
-          setMessages(res.data.data.content)
+          setChat(prev => [...prev, {
+            role: "user",
+            content: res.data.data.content
+          }])
           form.reset();
         }).catch(err => {
           console.log({err})
@@ -95,24 +111,18 @@ const ConvPage = () => {
         </Form>
       </section>
       <div className='w-full h-full'>
-      <div className="h-full row-span-5 overflow-auto w-full flex flex-col justify-start items-center">
-        {generating && <Loading />}
-        {/* {messages.length === 0 && !generating ? <Empty text={"No Conversation started"} /> :
-        messages.map((message, key) => {
-          return <div key={key} className={cn('my-2 w-full bg-gray-4 flex flex-row justify-start items-start p-1 rounded-md h-full overflow-auto', message.role != "assistant" ? "bg-violet-400" : "bg-violet-200")}>
-            {message.role != "assistant" ? <UserAvatar /> : <ChatAvatar />}
-            <p className={cn("m-1 ",message.role != "assistant" ? 'text-xl font-medium' : 'text-xl font-light italic')}>{message.content}</p>
-          </div>
-        })
-        
-        } */}
-        {messages.length != 0 &&
-        <div className={cn('my-2 w-full bg-gray-4 flex flex-row justify-start items-start p-1 rounded-md h-full overflow-auto', "bg-violet-200")}>
-            
-            {<ChatAvatar />}
-            <p className={cn("m-1 ",'text-xl font-light italic')}>{messages || ""}</p>
-          </div>
-          }
+      <div className="h-full row-span-5 overflow-auto w-full flex flex-col justify-start items-stretch">
+          {chat.map((ch, key) => {
+              return <div
+                key={key}
+                className={cn("m-1 rounded-md p-2 flex ", ch.role === "user" ? " bg-indigo-400" : "bg-indigo-400/50")}>
+                {ch.role !== "user" ? <UserAvatar /> : <ChatAvatar />}
+                <p className='pr-3 text-sm overflow-hidden leading-7'>
+                  {ch?.content || ""}
+                </p>
+              </div>
+            })}
+            {generating && <Loading />}
       </div>
       </div>
     </>

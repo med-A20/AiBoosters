@@ -6,13 +6,13 @@ import {useRouter} from 'next/navigation'
 import { useEffect } from 'react'
 
 export default function Home() {
-  const {isSignedIn}  = useAuth();
-  const router = useRouter()
-  useEffect(() => {
-    if (isSignedIn) {
-      router.push('/dashboard');
-    }
-  }, [isSignedIn]);
+  // const {isSignedIn}  = useAuth();
+  // const router = useRouter()
+  // useEffect(() => {
+  //   if (isSignedIn) {
+  //     router.push('/dashboard');
+  //   }
+  // }, [isSignedIn]);
   return (
     <div>
       {/* Nav Bar */}

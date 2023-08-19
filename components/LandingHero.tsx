@@ -32,7 +32,7 @@ const LandingHero = () => {
                     <p className='text-center text-zinc-100 italic text-muted-foreground'>Embark on Your Creative Expedition for Free</p>
                 </div>
                 <div className='flex m-3'>
-                    <Link href={isSignedIn ? "/sign-in" : "/sign-up"}
+                    <Link href={isSignedIn ? "/dashboard" : "/sign-up"}
                         className='m-auto text-xl'>
                         <Button >
                             Get Started Now!

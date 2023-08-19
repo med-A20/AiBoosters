@@ -24,40 +24,46 @@ import { amountOptions, formSchema, resolutionOptions } from "./constant";
 const PhotoPage = () => {
   const router = useRouter();
   const [photos, setPhotos] = useState<string[]>([]);
+  const [generating, setGenerating] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
-      amount: "1",
+      amount: 1,
       resolution: "512x512"
     }
   });
 
-  const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setGenerating(true);
     try {
-      setPhotos([]);
-
-      const response = await axios.post('https://saas-ai.onrender.com/api/image', values);
-
-      const urls = response.data.map((image: { url: string }) => image.url);
-
-      setPhotos(urls);
+      console.log("before request")
+      const response = await axios.post('https://saas-ai.onrender.com/api/image', {
+        prompt : values.prompt,
+        amount : values.amount, 
+        resolution : values.resolution
+      }).then((res)=>{
+        console.log("after request")
+        console.log(res.data.photo)
+  
+        setPhotos(res.data?.photo.map((photo: { url: string }) => photo.url));
+        console.log(res.data?.photo)
+      }).catch((err)=>{
+        console.log({err})
+      })
     } catch (error: any) {
-      if (error.response.status === 403) {
-        // proModal.onOpen();
-      } else {
-        // toast.error("Something went wrong.");
-      }
+
     } finally {
       router.refresh();
     }
+    form.reset()
+    setGenerating(true)
   }
 
   return ( 
-    <div>
+    <>
       <Heading
         title="Image Generation"
         desc="Turn your prompt into an image."
@@ -66,7 +72,7 @@ const PhotoPage = () => {
         bgColor="bg-pink-700/10"
       />
       <div className="px-4 lg:px-8">
-        <Form {...form}>
+        <Form {...form}> 
           <form 
             onSubmit={form.handleSubmit(onSubmit)} 
             className="
@@ -89,7 +95,7 @@ const PhotoPage = () => {
                   <FormControl className="m-0 p-0">
                     <Input
                       className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                      disabled={isLoading} 
+                      disabled={generating} 
                       placeholder="A picture of a horse in Swiss alps" 
                       {...field}
                     />
@@ -103,10 +109,10 @@ const PhotoPage = () => {
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-2">
                   <Select 
-                    disabled={isLoading} 
+                    disabled={generating} 
                     onValueChange={field.onChange} 
-                    value={field.value} 
-                    defaultValue={field.value}
+                    value={field.value.toString()} 
+                    defaultValue={field.value.toString()}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -133,7 +139,7 @@ const PhotoPage = () => {
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-2">
                   <Select 
-                    disabled={isLoading} 
+                    disabled={generating} 
                     onValueChange={field.onChange} 
                     value={field.value} 
                     defaultValue={field.value}
@@ -157,17 +163,15 @@ const PhotoPage = () => {
                 </FormItem>
               )}
             />
-            <Button className="col-span-12 lg:col-span-2 w-full" type="submit" disabled={isLoading} size="icon">
+            <Button className="col-span-12 lg:col-span-2 w-full" type="submit" disabled={generating} size="icon">
               Generate
             </Button>
           </form>
         </Form>
-        {isLoading && (
-          <div className="p-20">
+        {generating && (
             <Loader />
-          </div>
         )}
-        {photos.length === 0 && !isLoading && (
+        {photos.length === 0 && !generating && (
           <Empty label="No images generated." />
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
@@ -190,7 +194,7 @@ const PhotoPage = () => {
           ))}
         </div>
       </div>
-    </div>
+    </>
    );
 }
  
